@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cyber Crisis Decision Lab</title>
+  <style>
+    :root {
+      --bg: #eff4fb;
+      --card: rgba(255,255,255,0.88);
+      --card-solid: #ffffff;
+      --ink: #0f172a;
+      --muted: #64748b;
+      --line: rgba(148, 163, 184, 0.20);
+      --blue: #2563eb;
+      --blue2: #eff6ff;
+      --green: #047857;
+      --greenbg: #ecfdf5;
+      --amber: #b45309;
+      --amberbg: #fffbeb;
+      --red: #b91c1c;
+      --redbg: #fef2f2;
+      --shadow: 0 22px 55px rgba(15, 23, 42, 0.10);
+      --shadow-soft: 0 10px 28px rgba(15, 23, 42, 0.08);
+      --radius: 24px;
+      --radius-sm: 18px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(96,165,250,0.25) 0, transparent 28%),
+        radial-gradient(circle at 92% 8%, rgba(251,191,36,0.16) 0, transparent 24%),
+        radial-gradient(circle at 50% 100%, rgba(37,99,235,0.08) 0, transparent 30%),
+        linear-gradient(180deg, #f8fbff 0%, #eef4fb 55%, #eaf1fa 100%);
+      min-height: 100vh;
+    }
+
+    header {
+      background: rgba(255,255,255,0.72);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.18);
+      backdrop-filter: blur(18px);
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      box-shadow: 0 8px 28px rgba(15,23,42,0.05);
+    }
+
+    .wrap {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 22px 24px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 18px;
+      min-height: 82px;
+    }
+
+    .brand-block {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #0f172a, #2563eb);
+      color: white;
+      display: grid;
+      place-items: center;
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      box-shadow: 0 16px 32px rgba(37,99,235,0.24);
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .header-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.75);
+      border: 1px solid rgba(148,163,184,0.22);
+      color: #1e293b;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(15,23,42,0.05);
+    }
+
+    .header-chip.live::before {
+      content: "";
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 0 5px rgba(34,197,94,0.14);
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      font-size: clamp(26px, 4vw, 40px);
+      margin-bottom: 4px;
+      letter-spacing: -0.04em;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 330px;
+      gap: 22px;
+      align-items: start;
+    }
+
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+      .score-card { position: static !important; }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(12px);
+      overflow: hidden;
+    }
+
+    .card-inner {
+      padding: 24px;
+    }
+
+    .hero {
+      padding: 34px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.98), rgba(255,255,255,0.86));
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 13px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #0f172a, #1d4ed8);
+      color: white;
+      font-weight: 800;
+      font-size: 13px;
+      margin-bottom: 16px;
+      box-shadow: 0 10px 20px rgba(37,99,235,0.18);
+    }
+
+    .light-pill {
+      display: inline-flex;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #eef2ff;
+      color: #3730a3;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .hero h2 {
+      font-size: clamp(32px, 5vw, 56px);
+      line-height: 1.02;
+      letter-spacing: -0.05em;
+      margin-bottom: 16px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.65;
+    }
+
+    button {
+      border: 0;
+      border-radius: 16px;
+      padding: 13px 18px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.18s ease;
+      box-shadow: 0 8px 18px rgba(15,23,42,0.06);
+    }
+
+    .primary {
+      color: white;
+      background: linear-gradient(135deg, #111827, #2563eb);
+    }
+
+    .primary:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.02);
+      box-shadow: 0 16px 28px rgba(37,99,235,0.22);
+    }
+
+    .secondary {
+      background: rgba(255,255,255,0.92);
+      color: var(--ink);
+      border: 1px solid var(--line);
+    }
+
+    .secondary:hover {
+      background: #f8fafc;
+    }
+
+    .option-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 700px) {
+      .option-grid { grid-template-columns: 1fr; }
+    }
+
+    .option {
+      padding: 22px;
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid rgba(148,163,184,0.18);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.96));
+      box-shadow: var(--shadow-soft);
+      transition: all 0.2s ease;
+    }
+
+    .option:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 16px 30px rgba(15, 23, 42, 0.10);
+      border-color: #bfdbfe;
+    }
+
+    .option h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+      letter-spacing: -0.02em;
+    }
+
+    .option .desc {
+      color: var(--muted);
+      line-height: 1.55;
+      flex: 1;
+      margin-bottom: 14px;
+    }
+
+    .difference {
+      border-radius: 14px;
+      padding: 12px;
+      background: #f8fafc;
+      color: #475569;
+      font-size: 14px;
+      line-height: 1.45;
+      margin-bottom: 15px;
+    }
+
+    .learning {
+      margin-top: 18px;
+      background: var(--blue2);
+      border-color: #bfdbfe;
+    }
+
+    .learning strong { color: #1e40af; }
+
+    .score-card {
+      position: sticky;
+      top: 96px;
+    }
+
+    .metric {
+      margin-bottom: 17px;
+    }
+
+    .metric-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    .score-badge {
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 13px;
+      font-weight: 900;
+      border: 1px solid;
+    }
+
+    .score-good { color: var(--green); background: var(--greenbg); border-color: #bbf7d0; }
+    .score-mid { color: var(--amber); background: var(--amberbg); border-color: #fde68a; }
+    .score-low { color: var(--red); background: var(--redbg); border-color: #fecaca; }
+
+    .bar {
+      height: 9px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      overflow: hidden;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 50%;
+      border-radius: 999px;
+      background: #111827;
+      transition: width 0.35s ease;
+    }
+
+    .metric small {
+      color: var(--muted);
+      display: block;
+      margin-top: 5px;
+      line-height: 1.35;
+    }
+
+    .history-item {
+      background: #f8fafc;
+      border: 1px solid #edf2f7;
+      border-radius: 14px;
+      padding: 10px;
+      margin-top: 8px;
+      font-size: 13px;
+    }
+
+    .history-item strong {
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .round-title {
+      margin-bottom: 6px;
+      font-size: clamp(26px, 4vw, 38px);
+      letter-spacing: -0.04em;
+    }
+
+    .question {
+      font-size: 22px;
+      line-height: 1.35;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .muted {
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .hidden { display: none !important; }
+
+    .analysis-table {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      border-radius: 14px;
+      font-size: 14px;
+      margin-top: 12px;
+    }
+
+    .analysis-table th,
+    .analysis-table td {
+      border: 1px solid var(--line);
+      padding: 10px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .analysis-table th {
+      background: #f1f5f9;
+      font-weight: 900;
+    }
+
+    .delta-plus { color: var(--green); font-weight: 900; }
+    .delta-minus { color: var(--red); font-weight: 900; }
+    .delta-zero { color: #64748b; font-weight: 900; }
+
+    .result-profile {
+      background: linear-gradient(135deg, #111827, #1d4ed8);
+      color: white;
+      border: none;
+    }
+
+    .result-profile .muted {
+      color: rgba(255,255,255,0.78);
+    }
+
+    .profile-name {
+      font-size: clamp(34px, 5vw, 58px);
+      letter-spacing: -0.05em;
+      margin-bottom: 10px;
+    }
+
+    .small-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 700px) {
+      .small-grid { grid-template-columns: 1fr; }
+    }
+
+    details {
+      margin-top: 14px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: white;
+      padding: 14px;
+    }
+
+    summary {
+      cursor: pointer;
+      font-weight: 900;
+      color: #1e3a8a;
+    }
+
+    .print-note {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 16px;
+      padding: 14px;
+      color: #475569;
+      margin-top: 16px;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .scenario-visual {
+      margin-top: 26px;
+      border-radius: 28px;
+      padding: 18px;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(59,130,246,0.10), transparent 25%),
+        radial-gradient(circle at 100% 100%, rgba(37,99,235,0.08), transparent 30%),
+        linear-gradient(180deg, #f8fbff 0%, #eef5ff 100%);
+      border: 1px solid #dbeafe;
+    }
+
+    .visual-topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .visual-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #1e3a8a;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .visual-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.8);
+      border: 1px solid rgba(148,163,184,0.2);
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .visual-badge::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: #ef4444;
+      box-shadow: 0 0 0 4px rgba(239,68,68,0.14);
+    }
+
+    .photo-stack {
+      position: relative;
+      min-height: 400px;
+    }
+
+    .photo-card {
+      position: absolute;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.75);
+      box-shadow: 0 25px 50px rgba(15,23,42,0.18);
+      background: #0f172a;
+    }
+
+    .photo-card svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .photo-card.warning-card {
+      left: 2%;
+      top: 30px;
+      width: 50%;
+      aspect-ratio: 16 / 9;
+      z-index: 3;
+      transform: rotate(-3deg);
+    }
+
+    .photo-card.ops-card {
+      right: 2%;
+      top: 72px;
+      width: 60%;
+      aspect-ratio: 16 / 10;
+      z-index: 2;
+      transform: rotate(2.2deg);
+    }
+
+    .photo-label {
+      position: absolute;
+      left: 16px;
+      bottom: 16px;
+      z-index: 5;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.68);
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      backdrop-filter: blur(8px);
+    }
+
+    .scenario-footnotes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .scenario-note {
+      border-radius: 18px;
+      padding: 14px;
+      background: rgba(255,255,255,0.78);
+      border: 1px solid rgba(148,163,184,0.18);
+      box-shadow: 0 8px 20px rgba(15,23,42,0.05);
+    }
+
+    .scenario-note strong {
+      display: block;
+      margin-bottom: 6px;
+      color: #0f172a;
+    }
+
+    @media (max-width: 820px) {
+      .photo-stack {
+        min-height: 540px;
+      }
+      .photo-card.warning-card,
+      .photo-card.ops-card {
+        position: relative;
+        width: 100%;
+        left: auto;
+        right: auto;
+        top: auto;
+        transform: none;
+        margin-bottom: 16px;
+      }
+      .scenario-footnotes {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print {
+
+      header, button, .score-card, details.full-reference { display: none !important; }
+      body { background: white; }
+      .grid { grid-template-columns: 1fr; }
+      .card { box-shadow: none; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap topbar">
+      <div class="brand-block">
+        <div class="brand-mark">CC</div>
+        <div>
+          <h1>Cyber Crisis Decision Lab</h1>
+          <p class="subtitle">Project Management Practice · Interactive Decision Prototype</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <span class="header-chip live">Prototype Ready</span>
+        <span class="header-chip">4 Rounds</span>
+        <span class="header-chip">5 Indicators</span>
+        <button class="secondary" onclick="resetGame()">Reset</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section id="introScreen" class="grid">
+      <div class="card hero">
+        <span class="pill">Playable Prototype</span>
+        <h2>Manage a cyberattack on a critical transport signalling system.</h2>
+        <p>
+          You are the project management team. Across four rounds, your team must balance cost,
+          cyber risk, transport service continuity, public trust and regulatory compliance.
+        </p>
+        <p>
+          There is no perfect answer. The aim is to create the most balanced, defensible and realistic recovery strategy.
+        </p>
+        <div class="small-grid" style="margin-top: 22px;">
+          <div class="card" style="box-shadow:none;">
+            <div class="card-inner">
+              <h3>How it works</h3>
+              <p class="muted">Choose one strategy per round. A random uncertainty event appears after Round 3.</p>
+            </div>
+          </div>
+          <div class="card" style="box-shadow:none;">
+            <div class="card-inner">
+              <h3>Learning focus</h3>
+              <p class="muted">Trade-offs, risk thinking, stakeholder communication and long-term resilience.</p>
+            </div>
+          </div>
+        </div>
+        <button class="primary" style="margin-top: 24px;" onclick="startGame()">Start Game</button>
+      </div>
+      <aside id="introScores"></aside>
+    </section>
+
+    <section id="scenarioScreen" class="grid hidden">
+      <div>
+        <div class="card hero">
+          <span class="pill">Scenario Briefing</span>
+          <h2>Your transport network is under cyber pressure.</h2>
+          <p>
+            A metropolitan rail signalling and control system has been affected by a cyberattack.
+            Some services are delayed, technical teams are still identifying the full extent of the breach,
+            and public concern is increasing.
+          </p>
+          <p>
+            Your team is the appointed project management team. You are not only restoring a technical system.
+            You must also manage safety, service continuity, regulatory reporting, stakeholder communication,
+            vendor coordination and long-term resilience.
+          </p>
+
+          <div class="scenario-visual" aria-label="Cyber transport system illustration">
+            <div class="visual-topline">
+              <div class="visual-title">Incident visual briefing</div>
+              <div class="visual-badge">Cyber incident active</div>
+            </div>
+
+            <div class="photo-stack">
+              <div class="photo-card warning-card" aria-label="System hacked warning visual">
+                <svg viewBox="0 0 1600 900" role="img" aria-label="System hacked alert screen">
+                  <defs>
+                    <linearGradient id="warnbg" x1="0" x2="1" y1="0" y2="1">
+                      <stop offset="0%" stop-color="#041937"/>
+                      <stop offset="55%" stop-color="#0b2f5f"/>
+                      <stop offset="100%" stop-color="#0a4f7a"/>
+                    </linearGradient>
+                    <filter id="softGlow"><feGaussianBlur stdDeviation="8"/></filter>
+                  </defs>
+                  <rect width="1600" height="900" fill="url(#warnbg)"/>
+                  <g opacity="0.45" fill="#7dd3fc" font-family="Arial, sans-serif" font-size="36">
+                    <text x="70" y="110">&lt;signal.flow protocol="metro"&gt;</text>
+                    <text x="1080" y="120">network.watch 48%</text>
+                    <text x="90" y="240">system.recovery.queue()</text>
+                    <text x="1020" y="320">breach.response.check()</text>
+                    <text x="86" y="420">if(alert=true){ isolate.node(); }</text>
+                    <text x="930" y="520">route.control.buffer</text>
+                    <text x="86" y="640">restore.failover.sequence()</text>
+                  </g>
+                  <g transform="translate(500 175)">
+                    <rect x="0" y="0" width="610" height="460" rx="20" fill="#08203f" stroke="#86d0ff" stroke-width="6"/>
+                    <rect x="20" y="18" width="570" height="28" rx="14" fill="rgba(134,208,255,0.15)"/>
+                    <circle cx="46" cy="32" r="7" fill="#93c5fd"/>
+                    <circle cx="66" cy="32" r="7" fill="#fde68a"/>
+                    <circle cx="86" cy="32" r="7" fill="#fda4af"/>
+                    <g transform="translate(145 110)">
+                      <polygon points="160,0 320,280 0,280" fill="#facc15" filter="url(#softGlow)"/>
+                      <polygon points="160,32 285,248 35,248" fill="#08203f"/>
+                      <rect x="146" y="85" width="28" height="94" rx="8" fill="#facc15"/>
+                      <circle cx="160" cy="214" r="18" fill="#facc15"/>
+                    </g>
+                    <text x="140" y="386" fill="#dff6ff" font-size="72" font-family="Arial, sans-serif" font-weight="400">System</text>
+                    <text x="440" y="386" fill="#ffffff" font-size="72" font-family="Arial, sans-serif" font-weight="700">HACKED</text>
+                  </g>
+                </svg>
+                <div class="photo-label">Warning Interface</div>
+              </div>
+
+              <div class="photo-card ops-card" aria-label="Cyber response operations room visual">
+                <svg viewBox="0 0 1600 1000" role="img" aria-label="Cyber response operations room">
+                  <defs>
+                    <linearGradient id="opsbg" x1="0" x2="1" y1="0" y2="1">
+                      <stop offset="0%" stop-color="#0d2038"/>
+                      <stop offset="100%" stop-color="#132d4f"/>
+                    </linearGradient>
+                    <linearGradient id="screen" x1="0" x2="1">
+                      <stop offset="0%" stop-color="#1d4ed8"/>
+                      <stop offset="100%" stop-color="#38bdf8"/>
+                    </linearGradient>
+                  </defs>
+                  <rect width="1600" height="1000" fill="url(#opsbg)"/>
+                  <g opacity="0.32" stroke="#7dd3fc" stroke-width="10">
+                    <line x1="140" y1="0" x2="140" y2="1000"/>
+                    <line x1="540" y1="0" x2="540" y2="1000"/>
+                    <line x1="1180" y1="0" x2="1180" y2="1000"/>
+                  </g>
+                  <g fill="#0b1529">
+                    <rect x="120" y="565" width="360" height="200" rx="12"/>
+                    <rect x="480" y="510" width="330" height="210" rx="12"/>
+                    <rect x="845" y="560" width="360" height="205" rx="12"/>
+                  </g>
+                  <g>
+                    <rect x="105" y="350" width="370" height="220" rx="18" fill="#0f172a" stroke="#7dd3fc"/>
+                    <rect x="470" y="305" width="350" height="215" rx="18" fill="#0f172a" stroke="#7dd3fc"/>
+                    <rect x="840" y="360" width="390" height="220" rx="18" fill="#0f172a" stroke="#7dd3fc"/>
+                    <rect x="1210" y="318" width="250" height="210" rx="18" fill="#0f172a" stroke="#7dd3fc"/>
+                    <path d="M130 450 C220 390, 280 510, 450 430" fill="none" stroke="url(#screen)" stroke-width="6"/>
+                    <path d="M490 430 C590 350, 660 490, 785 390" fill="none" stroke="url(#screen)" stroke-width="6"/>
+                    <path d="M870 470 C1010 360, 1100 460, 1200 390" fill="none" stroke="url(#screen)" stroke-width="6"/>
+                    <circle cx="280" cy="455" r="56" fill="none" stroke="#7dd3fc" stroke-width="3"/>
+                    <path d="M1260 380 h160 v100 h-160z" fill="#143055"/>
+                    <path d="M1280 410 q50 -36 100 0 q-50 36 -100 0z" fill="none" stroke="#93c5fd" stroke-width="4"/>
+                  </g>
+                  <g fill="#111827">
+                    <circle cx="260" cy="774" r="84"/>
+                    <rect x="195" y="830" width="130" height="88" rx="18"/>
+                    <circle cx="680" cy="750" r="62"/>
+                    <rect x="620" y="798" width="130" height="118" rx="18"/>
+                    <circle cx="980" cy="758" r="72"/>
+                    <rect x="908" y="822" width="152" height="96" rx="18"/>
+                    <circle cx="840" cy="275" r="68"/>
+                    <rect x="795" y="338" width="92" height="196" rx="18"/>
+                  </g>
+                  <g fill="#e2e8f0" opacity="0.92" font-family="Arial, sans-serif">
+                    <text x="828" y="224" font-size="34" font-weight="700">Crisis Lead</text>
+                    <text x="225" y="960" font-size="28">Operator</text>
+                    <text x="634" y="956" font-size="28">Analyst</text>
+                    <text x="940" y="958" font-size="28">Engineer</text>
+                  </g>
+                </svg>
+                <div class="photo-label">Incident Command Room</div>
+              </div>
+            </div>
+
+            <div class="scenario-footnotes">
+              <div class="scenario-note">
+                <strong>What happened</strong>
+                A cyberattack is affecting signalling and rail control interfaces.
+              </div>
+              <div class="scenario-note">
+                <strong>Why it matters</strong>
+                Service continuity, public safety and system assurance are all under pressure.
+              </div>
+              <div class="scenario-note">
+                <strong>Your task</strong>
+                Make realistic project decisions, not just technical fixes.
+              </div>
+            </div>
+          </div>
+
+          <div class="small-grid" style="margin-top: 22px;">
+            <div class="card" style="box-shadow:none;">
+              <div class="card-inner">
+                <h3>Your role</h3>
+                <p class="muted">Make four project decisions under uncertainty and justify the recovery pathway.</p>
+              </div>
+            </div>
+            <div class="card" style="box-shadow:none;">
+              <div class="card-inner">
+                <h3>Your challenge</h3>
+                <p class="muted">Balance budget, cyber risk, service continuity, public trust and compliance.</p>
+              </div>
+            </div>
+          </div>
+
+          <button class="primary" style="margin-top: 24px;" onclick="beginDecisions()">Begin Round 1</button>
+        </div>
+      </div>
+      <aside>
+        <div class="card score-card">
+          <div class="card-inner">
+            <h3>What to watch</h3>
+            <div class="history-item"><strong>Risk Control</strong> Can you reduce cyber exposure without overreacting?</div>
+            <div class="history-item"><strong>Service Level</strong> Can you keep transport moving safely?</div>
+            <div class="history-item"><strong>Public Trust</strong> Can you communicate enough without creating confusion?</div>
+            <div class="history-item"><strong>Compliance</strong> Can you satisfy reporting and assurance expectations?</div>
+            <div class="history-item"><strong>Budget Health</strong> Can you protect long-term value without exhausting resources?</div>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <section id="gameScreen" class="grid hidden">
+      <div>
+        <div class="card">
+          <div class="card-inner">
+            <span id="roundBadge" class="light-pill"></span>
+            <h2 id="roundTitle" class="round-title"></h2>
+            <p id="roundQuestion" class="question"></p>
+            <p id="roundFocus" class="muted"></p>
+          </div>
+        </div>
+
+        <div id="optionsContainer" class="option-grid" style="margin-top: 18px;"></div>
+
+        <div class="card learning">
+          <div class="card-inner">
+            <strong>Learning point</strong>
+            <p id="roundLearning" class="muted" style="margin: 6px 0 0;"></p>
+          </div>
+        </div>
+      </div>
+
+      <aside>
+        <div id="liveScores"></div>
+        <div id="historyPanel" class="card" style="margin-top: 16px;"></div>
+      </aside>
+    </section>
+
+    <section id="eventScreen" class="grid hidden">
+      <div>
+        <div class="card">
+          <div class="card-inner">
+            <span class="pill" style="background:#92400e;">Uncertainty Shock</span>
+            <h2 class="round-title">Random Event</h2>
+            <p class="muted">
+              Real projects face uncertainty after decisions have already been made. Draw one event card to continue.
+            </p>
+            <div id="eventContent" style="margin-top: 20px;"></div>
+          </div>
+        </div>
+        <div class="card learning">
+          <div class="card-inner">
+            <strong>Learning point</strong>
+            <p class="muted" style="margin: 6px 0 0;">This event stage teaches uncertainty and risk thinking. Even well-planned projects face unexpected pressures.</p>
+          </div>
+        </div>
+      </div>
+      <aside id="eventScores"></aside>
+    </section>
+
+    <section id="resultScreen" class="hidden">
+      <div class="grid">
+        <div>
+          <div class="card result-profile">
+            <div class="card-inner">
+              <span class="pill" style="background:rgba(255,255,255,0.14);">Final Recovery Profile</span>
+              <h2 id="profileName" class="profile-name"></h2>
+              <p id="profileSummary" class="muted" style="font-size:18px;"></p>
+              <div style="margin-top: 20px; padding: 16px; border-radius: 18px; background:rgba(255,255,255,0.12);">
+                <strong>Course link</strong>
+                <p id="profileCourse" class="muted" style="margin: 6px 0 0;"></p>
+              </div>
+            </div>
+          </div>
+
+          <div id="learningAnalysis"></div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="card-inner">
+              <h2>Decision Impact Analysis</h2>
+              <p class="muted">
+                Exact score changes are shown only at the end so players make decisions based on project logic rather than gaming the numbers.
+              </p>
+              <div id="chosenAnalysis"></div>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:18px;">
+            <div class="card-inner">
+              <h2>Reflection Questions</h2>
+              <ol class="muted" style="line-height:1.8;">
+                <li>Which trade-off was hardest to manage?</li>
+                <li>Which indicator did your team prioritise, and why?</li>
+                <li>Which decision would be hardest to justify to stakeholders?</li>
+                <li>What would you change if you played again?</li>
+              </ol>
+            </div>
+          </div>
+
+          <details class="full-reference">
+            <summary>Show full scoring reference for all options</summary>
+            <div id="fullReference"></div>
+          </details>
+
+          <div class="print-note">
+            Tip: Use the browser print function to save the final analysis as PDF for class discussion.
+          </div>
+
+          <button class="primary" style="margin-top:18px;" onclick="resetGame()">Play Again</button>
+        </div>
+
+        <aside id="finalScores"></aside>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const indicators = [
+      { key: "budget", label: "Budget Health", meaning: "Cost control / available budget", start: 10 },
+      { key: "risk", label: "Risk Control", meaning: "Cyber risk reduction", start: 5 },
+      { key: "service", label: "Service Level", meaning: "Transport service continuity", start: 5 },
+      { key: "trust", label: "Public Trust", meaning: "Public confidence and reputation", start: 5 },
+      { key: "compliance", label: "Compliance", meaning: "Regulatory and reporting performance", start: 5 }
+    ];
+
+    const rounds = [
+      {
+        id: 1,
+        title: "Round 1 — Immediate Response",
+        question: "Cyberattack just happened. What is your first operating decision?",
+        focus: "Core difference: safety priority, service priority, segmented containment, or backup operation.",
+        learning: "This round teaches safety vs service continuity. Keeping services running is not always the same as managing risk well.",
+        options: [
+          { id: "1A", name: "A. Full Safety Shutdown", description: "Stop most affected services immediately to contain cyber and safety risks.", difference: "Safest but most disruptive.", effects: { budget:-2, risk:3, service:-3, trust:-1, compliance:2 } },
+          { id: "1B", name: "B. Service Continuity Mode", description: "Keep most services running while the cyber team investigates in the background.", difference: "Best for short-term service but highest cyber risk.", effects: { budget:0, risk:-3, service:2, trust:-1, compliance:-1 } },
+          { id: "1C", name: "C. Segmented Operation", description: "Isolate risky parts of the network and keep safe sections operating.", difference: "Balanced containment.", effects: { budget:-1, risk:1, service:0, trust:1, compliance:1 } },
+          { id: "1D", name: "D. Backup Operation Mode", description: "Use backup/manual procedures to maintain limited services while reducing system exposure.", difference: "Fallback operation; safer than service continuity, but less efficient.", effects: { budget:-2, risk:2, service:-1, trust:0, compliance:1 } }
+        ]
+      },
+      {
+        id: 2,
+        title: "Round 2 — Recovery Strategy",
+        question: "The attack is partly contained. How will you restore the system?",
+        focus: "Core difference: fast recovery, investigation-led recovery, integrated upgrade, or vendor-led restoration.",
+        learning: "This round teaches speed vs risk control. A quick fix may restore operations, but it may not address the root cause.",
+        options: [
+          { id: "2A", name: "A. Rapid Stabilisation", description: "Fix urgent faults and restore basic services quickly, with limited deeper redesign.", difference: "Fastest recovery, but may not solve deeper cyber issues.", effects: { budget:-1, risk:0, service:3, trust:0, compliance:-1 } },
+          { id: "2B", name: "B. Forensic-Led Recovery", description: "Bring in cyber specialists to investigate the attack and guide targeted recovery.", difference: "Stronger investigation and assurance, but costs more.", effects: { budget:-3, risk:3, service:1, trust:1, compliance:2 } },
+          { id: "2C", name: "C. Integrated Recovery Upgrade", description: "Restore the system while upgrading major cyber monitoring and protection systems.", difference: "Strongest long-term protection, but expensive and slower.", effects: { budget:-5, risk:4, service:0, trust:2, compliance:2 } },
+          { id: "2D", name: "D. Vendor-Led Restoration", description: "Ask existing technology vendors to restore and patch affected systems quickly.", difference: "Practical and convenient, but may increase vendor dependency.", effects: { budget:-2, risk:1, service:2, trust:0, compliance:0 } }
+        ]
+      },
+      {
+        id: 3,
+        title: "Round 3 — Stakeholder and Regulatory Response",
+        question: "The media, public and regulators are now watching. How will you respond?",
+        focus: "Core difference: public communication, regulatory assurance, internal alignment, or passenger support.",
+        learning: "This round teaches stakeholder and communication management. Technical recovery alone is not enough; trust and compliance are part of project success.",
+        options: [
+          { id: "3A", name: "A. Public Transparency First", description: "Provide early public updates about disruption, safety and recovery progress.", difference: "Protects public trust through early communication.", effects: { budget:0, risk:0, service:0, trust:4, compliance:1 } },
+          { id: "3B", name: "B. Regulator Assurance First", description: "Focus first on formal reporting and evidence for cyber and infrastructure regulators.", difference: "Strongest for compliance but may slow public response.", effects: { budget:-1, risk:1, service:-1, trust:1, compliance:4 } },
+          { id: "3C", name: "C. Internal Alignment First", description: "Confirm facts with government, operators and technical teams before wider communication.", difference: "Avoids wrong messaging but may seem slow externally.", effects: { budget:0, risk:1, service:0, trust:0, compliance:1 } },
+          { id: "3D", name: "D. Passenger Support First", description: "Focus on alternative travel information and direct support for affected passengers.", difference: "Helps passengers directly, but does not strongly address cyber or regulatory issues.", effects: { budget:-2, risk:0, service:2, trust:3, compliance:0 } }
+        ]
+      },
+      {
+        id: 4,
+        title: "Round 4 — Long-Term Resilience",
+        question: "Services are mostly restored. How will you reduce future cyber risk?",
+        focus: "Core difference: monitoring and drills, network segmentation, governance and training, or managed security partnership.",
+        learning: "This round teaches resilience planning. Long-term resilience is not only a technical upgrade; it also includes governance, training, monitoring and vendor management.",
+        options: [
+          { id: "4A", name: "A. Monitoring and Cyber Drills", description: "Improve cyber monitoring and run regular cyber incident exercises.", difference: "Balanced detection and preparedness.", effects: { budget:-3, risk:3, service:1, trust:2, compliance:2 } },
+          { id: "4B", name: "B. Network Segmentation Program", description: "Separate critical digital systems so one attack cannot spread across the whole network.", difference: "Strongest technical resilience but costly and complex.", effects: { budget:-4, risk:4, service:0, trust:1, compliance:3 } },
+          { id: "4C", name: "C. Governance and Training Upgrade", description: "Improve response procedures, staff training, accountability and post-incident review.", difference: "Strongest organisational improvement with lower cost.", effects: { budget:-1, risk:2, service:0, trust:3, compliance:3 } },
+          { id: "4D", name: "D. Managed Security Partnership", description: "Set up long-term external support for monitoring, maintenance and security updates.", difference: "Improves ongoing service support, but creates reliance on external providers.", effects: { budget:-3, risk:3, service:2, trust:1, compliance:2 } }
+        ]
+      }
+    ];
+
+    const events = [
+      {
+        id: "media",
+        name: "Media Leak",
+        description: "Media reports that the authority delayed informing the public.",
+        detail: "Trust -2, Compliance -1. If Public Transparency First was chosen, Trust -1 only.",
+        apply: (scores, history) => history[3]?.id === "3A"
+          ? { budget:0, risk:0, service:0, trust:-1, compliance:0 }
+          : { budget:0, risk:0, service:0, trust:-2, compliance:-1 }
+      },
+      {
+        id: "attack",
+        name: "Second Attack Attempt",
+        description: "A second cyberattack attempt is detected during recovery.",
+        detail: "If Risk < 6: Risk -2 and Service -1. If Risk ≥ 6: no penalty.",
+        apply: (scores) => scores.risk < 6
+          ? { budget:0, risk:-2, service:-1, trust:0, compliance:0 }
+          : { budget:0, risk:0, service:0, trust:0, compliance:0 }
+      },
+      {
+        id: "regulator",
+        name: "Regulator Request",
+        description: "The regulator requests urgent evidence of system safety and compliance.",
+        detail: "If Compliance < 6: Compliance -2. If Compliance ≥ 6: Compliance +1 and Trust +1.",
+        apply: (scores) => scores.compliance < 6
+          ? { budget:0, risk:0, service:0, trust:0, compliance:-2 }
+          : { budget:0, risk:0, service:0, trust:1, compliance:1 }
+      },
+      {
+        id: "vendor",
+        name: "Vendor Delay",
+        description: "A key vendor cannot deliver required work on time.",
+        detail: "If Vendor-Led Restoration was chosen: Budget -2 and Service -1. If Forensic-Led Recovery or Integrated Recovery Upgrade was chosen: Budget -1.",
+        apply: (scores, history) => {
+          if (history[2]?.id === "2D") return { budget:-2, risk:0, service:-1, trust:0, compliance:0 };
+          if (history[2]?.id === "2B" || history[2]?.id === "2C") return { budget:-1, risk:0, service:0, trust:0, compliance:0 };
+          return { budget:0, risk:0, service:0, trust:0, compliance:0 };
+        }
+      },
+      {
+        id: "public",
+        name: "Public Pressure",
+        description: "Passengers complain about disruption and unclear information.",
+        detail: "If Service < 6: Trust -2. If Service ≥ 6: Trust +1.",
+        apply: (scores) => scores.service < 6
+          ? { budget:0, risk:0, service:0, trust:-2, compliance:0 }
+          : { budget:0, risk:0, service:0, trust:1, compliance:0 }
+      },
+      {
+        id: "funding",
+        name: "Funding Constraint",
+        description: "Emergency funding is reduced due to budget pressure.",
+        detail: "Budget -1. If Budget < 4 after this event: Risk -1.",
+        apply: (scores) => {
+          const afterBudget = clamp(scores.budget - 1);
+          return { budget:-1, risk: afterBudget < 4 ? -1 : 0, service:0, trust:0, compliance:0 };
+        }
+      }
+    ];
+
+    const profiles = [
+      {
+        name: "Crisis Spiral",
+        condition: s => Object.values(s).filter(v => v <= 3).length >= 2,
+        summary: "The strategy created serious weaknesses across several areas.",
+        course: "Shows how unmanaged trade-offs can create cascading project failure."
+      },
+      {
+        name: "Balanced Resilience Builder — Budget Tight Edition",
+        condition: s => s.risk >= 7 && s.service >= 7 && s.trust >= 7 && s.compliance >= 7 && s.budget <= 4,
+        summary: "The strategy is strong and defensible, but creates budget pressure.",
+        course: "Shows that high resilience often requires strong cost and procurement control."
+      },
+      {
+        name: "Fortress Mode Activated",
+        condition: s => s.risk >= 8 && s.compliance >= 8 && (s.service <= 5 || s.budget <= 4),
+        summary: "The team prioritised cyber protection and compliance, but created service or cost pressure.",
+        course: "Shows the tension between risk control and operational continuity."
+      },
+      {
+        name: "Service Speedrunner",
+        condition: s => s.service >= 8 && (s.risk <= 5 || s.compliance <= 5),
+        summary: "The team restored services quickly, but left unresolved cyber or regulatory risks.",
+        course: "Shows that fast recovery is not always sustainable recovery."
+      },
+      {
+        name: "Budget Guardian",
+        condition: s => s.budget >= 7 && (s.risk <= 5 || s.trust <= 5 || s.compliance <= 5),
+        summary: "The team controlled cost well, but may have underinvested in resilience or stakeholder confidence.",
+        course: "Shows that lowest cost is not always best value."
+      },
+      {
+        name: "Public Trust Hero",
+        condition: s => s.trust >= 8 && (s.budget <= 4 || s.risk <= 5),
+        summary: "The team communicated well and protected public confidence, but may still face technical or financial pressure.",
+        course: "Shows that communication must be supported by real recovery capability."
+      },
+      {
+        name: "Regulator’s Favourite",
+        condition: s => s.compliance >= 8 && (s.service <= 5 || s.budget <= 5),
+        summary: "The team satisfied regulatory expectations, but the approach may be costly or operationally difficult.",
+        course: "Shows that compliance is essential, but not the only success measure."
+      },
+      {
+        name: "Patch-and-Pray Strategy",
+        condition: s => s.service >= 6 && s.risk <= 4,
+        summary: "The team achieved temporary recovery, but underlying vulnerabilities remain.",
+        course: "Shows the danger of treating symptoms without addressing root causes."
+      },
+      {
+        name: "Balanced Resilience Builder",
+        condition: s => Object.values(s).every(v => v >= 5),
+        summary: "The team achieved a realistic balance across cost, risk, service, trust and compliance.",
+        course: "Shows that good project management is about balanced judgement, not one perfect answer."
+      },
+      {
+        name: "Recovery in Progress",
+        condition: () => true,
+        summary: "The strategy is workable but mixed, with no major collapse and no strong balance.",
+        course: "Shows that many real projects end with partial success and require further refinement."
+      }
+    ];
+
+    let scores = {};
+    let currentRoundIndex = 0;
+    let history = {};
+    let currentEvent = null;
+    let currentEventEffect = null;
+
+    function initialiseScores() {
+      scores = {};
+      indicators.forEach(i => scores[i.key] = i.start);
+    }
+
+    function clamp(value) {
+      return Math.max(0, Math.min(10, value));
+    }
+
+    function applyEffects(effects) {
+      indicators.forEach(i => {
+        scores[i.key] = clamp(scores[i.key] + (effects[i.key] || 0));
+      });
+    }
+
+    function deltaClass(v) {
+      if (v > 0) return "delta-plus";
+      if (v < 0) return "delta-minus";
+      return "delta-zero";
+    }
+
+    function fmt(v) {
+      return v > 0 ? "+" + v : String(v);
+    }
+
+    function scoreClass(v) {
+      if (v >= 7) return "score-good";
+      if (v >= 4) return "score-mid";
+      return "score-low";
+    }
+
+    function scoreCardHTML() {
+      return `
+        <div class="card score-card">
+          <div class="card-inner">
+            <h3>Current Indicators</h3>
+            ${indicators.map(i => `
+              <div class="metric">
+                <div class="metric-head">
+                  <span>${i.label}</span>
+                  <span class="score-badge ${scoreClass(scores[i.key])}">${scores[i.key]}/10</span>
+                </div>
+                <div class="bar"><div class="bar-fill" style="width:${scores[i.key] * 10}%"></div></div>
+                <small>${i.meaning}</small>
+              </div>
+            `).join("")}
+          </div>
+        </div>
+      `;
+    }
+
+    function historyHTML() {
+      return `
+        <div class="card-inner">
+          <h3>Decision History</h3>
+          ${rounds.map(r => `
+            <div class="history-item">
+              <strong>Round ${r.id}</strong>
+              ${history[r.id] ? history[r.id].name : "Not decided yet"}
+            </div>
+          `).join("")}
+          ${currentEvent ? `
+            <div class="history-item" style="background:#fffbeb;">
+              <strong>Random Event</strong>
+              ${currentEvent.name}
+            </div>
+          ` : ""}
+        </div>
+      `;
+    }
+
+    function switchScreen(id) {
+      ["introScreen", "scenarioScreen", "gameScreen", "eventScreen", "resultScreen"].forEach(s => document.getElementById(s).classList.add("hidden"));
+      document.getElementById(id).classList.remove("hidden");
+      renderScorePanels();
+    }
+
+    function renderScorePanels() {
+      const panels = ["introScores", "liveScores", "eventScores", "finalScores"];
+      panels.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = scoreCardHTML();
+      });
+      const h = document.getElementById("historyPanel");
+      if (h) h.innerHTML = historyHTML();
+    }
+
+    function startGame() {
+      switchScreen("scenarioScreen");
+    }
+
+    function beginDecisions() {
+      switchScreen("gameScreen");
+      renderRound();
+    }
+
+    function renderRound() {
+      const round = rounds[currentRoundIndex];
+      document.getElementById("roundBadge").textContent = `Round ${round.id} of 4`;
+      document.getElementById("roundTitle").textContent = round.title;
+      document.getElementById("roundQuestion").textContent = round.question;
+      document.getElementById("roundFocus").textContent = round.focus;
+      document.getElementById("roundLearning").textContent = round.learning;
+
+      document.getElementById("optionsContainer").innerHTML = round.options.map(o => `
+        <article class="option">
+          <h3>${o.name}</h3>
+          <p class="desc">${o.description}</p>
+          <div class="difference"><strong>Difference:</strong> ${o.difference}</div>
+          <button class="primary" onclick="chooseOption('${o.id}')">Choose this strategy</button>
+        </article>
+      `).join("");
+
+      renderScorePanels();
+    }
+
+    function chooseOption(optionId) {
+      const round = rounds[currentRoundIndex];
+      const option = round.options.find(o => o.id === optionId);
+      history[round.id] = option;
+      applyEffects(option.effects);
+
+      if (round.id === 3) {
+        switchScreen("eventScreen");
+        renderEventScreen();
+        return;
+      }
+
+      if (currentRoundIndex < rounds.length - 1) {
+        currentRoundIndex++;
+        renderRound();
+      } else {
+        renderResult();
+      }
+    }
+
+    function renderEventScreen() {
+      const content = document.getElementById("eventContent");
+      if (!currentEvent) {
+        content.innerHTML = `<button class="primary" onclick="drawEvent()">Draw Event Card</button>`;
+      } else {
+        content.innerHTML = `
+          <div class="card" style="box-shadow:none; background:#f8fafc;">
+            <div class="card-inner">
+              <h2>${currentEvent.name}</h2>
+              <p class="muted">${currentEvent.description}</p>
+              <p class="muted"><strong>Rule:</strong> ${currentEvent.detail}</p>
+              <p class="muted">The exact scoring effect will also appear in the final decision analysis.</p>
+              <button class="primary" onclick="continueAfterEvent()">Continue to Round 4</button>
+            </div>
+          </div>
+        `;
+      }
+      renderScorePanels();
+    }
+
+    function drawEvent() {
+      const event = events[Math.floor(Math.random() * events.length)];
+      currentEvent = event;
+      currentEventEffect = event.apply(scores, history);
+      applyEffects(currentEventEffect);
+      renderEventScreen();
+    }
+
+    function continueAfterEvent() {
+      currentRoundIndex = 3;
+      switchScreen("gameScreen");
+      renderRound();
+    }
+
+    function getProfile() {
+      return profiles.find(p => p.condition(scores));
+    }
+
+    function generateLearningAnalysis() {
+      const strengths = [];
+      const cautions = [];
+
+      if (scores.risk >= 7) strengths.push("You handled cyber risk in a relatively strong way by investing in containment, investigation or resilience measures.");
+      else if (scores.risk <= 4) cautions.push("Your approach leaves cyber risk relatively exposed. In practice, restoring services without reducing underlying vulnerabilities can create repeat incidents.");
+
+      if (scores.service >= 7) strengths.push("You protected service continuity well, showing awareness that recovery projects must also support ongoing operations.");
+      else if (scores.service <= 4) cautions.push("Service continuity is weak in your result. This suggests your recovery pathway may be defensible, but highly disruptive for network users.");
+
+      if (scores.trust >= 7) strengths.push("You managed public trust well, which reflects the importance of stakeholder communication during crisis recovery.");
+      else if (scores.trust <= 4) cautions.push("Public trust remains fragile. This often happens when communication is delayed, unclear or overshadowed by disruption.");
+
+      if (scores.compliance >= 7) strengths.push("You performed well on compliance, showing good awareness of regulatory reporting and accountability requirements.");
+      else if (scores.compliance <= 4) cautions.push("Compliance is a weaker area. In a real critical infrastructure project, this could create governance pressure and further scrutiny.");
+
+      if (scores.budget >= 7) strengths.push("You preserved budget capacity effectively, which is important for long-term deliverability and value.");
+      else if (scores.budget <= 4) cautions.push("Your strategy places heavy pressure on budget. This may still be justified, but it highlights the cost of resilience and intensive recovery actions.");
+
+      let overall = "";
+      const values = Object.values(scores);
+      const spread = Math.max(...values) - Math.min(...values);
+
+      if (Object.values(scores).every(v => v >= 5) && spread <= 3) {
+        overall = "Overall, your result is fairly balanced. This is a strong project management outcome because it suggests you considered trade-offs across technical, operational and stakeholder dimensions rather than over-optimising one area.";
+      } else if (scores.risk >= 8 && scores.compliance >= 8 && (scores.service <= 5 || scores.budget <= 5)) {
+        overall = "Overall, your decision pattern prioritised assurance and control. This is often appropriate in safety-critical environments, but it also shows how strong protection measures can reduce service performance or increase cost pressure.";
+      } else if (scores.service >= 8 && (scores.risk <= 5 || scores.compliance <= 5)) {
+        overall = "Overall, your decision pattern prioritised service restoration. This can look attractive in the short term, but the learning point is that fast recovery is not always the same as resilient recovery.";
+      } else if (scores.budget >= 7 && (scores.risk <= 5 || scores.trust <= 5 || scores.compliance <= 5)) {
+        overall = "Overall, your team controlled cost effectively, but the result suggests underinvestment in one or more critical areas. In project management, low cost alone rarely defines success.";
+      } else {
+        overall = "Overall, your result shows a mixed strategy with some strong choices and some exposed areas. This is realistic: most crisis recovery projects involve imperfect trade-offs rather than a single ideal solution.";
+      }
+
+      const strengthsHTML = strengths.length
+        ? `<ul>${strengths.map(s => `<li>${s}</li>`).join("")}</ul>`
+        : `<p class="muted">No major strengths stand out strongly in the current score profile.</p>`;
+
+      const cautionsHTML = cautions.length
+        ? `<ul>${cautions.map(s => `<li>${s}</li>`).join("")}</ul>`
+        : `<p class="muted">No major weak areas stand out strongly in the current score profile.</p>`;
+
+      return `
+        <div class="card" style="margin-top:18px;">
+          <div class="card-inner">
+            <h2>Learning Analysis</h2>
+            <p class="muted">${overall}</p>
+            <div class="small-grid" style="margin-top:14px;">
+              <div>
+                <h3 style="margin-bottom:8px;">What you did well</h3>
+                ${strengthsHTML}
+              </div>
+              <div>
+                <h3 style="margin-bottom:8px;">What to improve</h3>
+                ${cautionsHTML}
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderResult() {
+      switchScreen("resultScreen");
+      const profile = getProfile();
+      document.getElementById("profileName").textContent = profile.name;
+      document.getElementById("profileSummary").textContent = profile.summary;
+      document.getElementById("profileCourse").textContent = profile.course;
+      document.getElementById("learningAnalysis").innerHTML = generateLearningAnalysis();
+      document.getElementById("chosenAnalysis").innerHTML = chosenAnalysisHTML();
+      document.getElementById("fullReference").innerHTML = fullReferenceHTML();
+      renderScorePanels();
+    }
+
+    function effectsRow(effects) {
+      return indicators.map(i => `<td class="${deltaClass(effects[i.key] || 0)}">${fmt(effects[i.key] || 0)}</td>`).join("");
+    }
+
+    function chosenAnalysisHTML() {
+      const rows = rounds.map(r => {
+        const o = history[r.id];
+        return `
+          <tr>
+            <td><strong>Round ${r.id}</strong><br>${r.title.replace(/Round \\d+ — /, "")}</td>
+            <td><strong>${o.name}</strong><br>${o.description}</td>
+            ${effectsRow(o.effects)}
+          </tr>
+        `;
+      }).join("");
+
+      const eventRow = currentEvent ? `
+        <tr>
+          <td><strong>Random Event</strong></td>
+          <td><strong>${currentEvent.name}</strong><br>${currentEvent.description}</td>
+          ${effectsRow(currentEventEffect || {})}
+        </tr>
+      ` : "";
+
+      return `
+        <table class="analysis-table">
+          <thead>
+            <tr>
+              <th>Stage</th>
+              <th>Decision</th>
+              ${indicators.map(i => `<th>${i.label}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>${rows}${eventRow}</tbody>
+        </table>
+      `;
+    }
+
+    function fullReferenceHTML() {
+      return rounds.map(r => `
+        <h3 style="margin-top:20px;">${r.title}</h3>
+        <table class="analysis-table">
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Description</th>
+              ${indicators.map(i => `<th>${i.label}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            ${r.options.map(o => `
+              <tr>
+                <td><strong>${o.name}</strong></td>
+                <td>${o.description}</td>
+                ${effectsRow(o.effects)}
+              </tr>
+            `).join("")}
+          </tbody>
+        </table>
+      `).join("") + `
+        <h3 style="margin-top:20px;">Random Events</h3>
+        <table class="analysis-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Rule</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${events.map(e => `<tr><td><strong>${e.name}</strong></td><td>${e.detail}</td></tr>`).join("")}
+          </tbody>
+        </table>
+      `;
+    }
+
+    function resetGame() {
+      initialiseScores();
+      currentRoundIndex = 0;
+      history = {};
+      currentEvent = null;
+      currentEventEffect = null;
+      switchScreen("introScreen");
+    }
+
+    initialiseScores();
+    renderScorePanels();
+  </script>
+</body>
+</html>
